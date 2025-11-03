@@ -1,4 +1,4 @@
-**server.js**
+**SERVER.JS**
 
   Main server file.
   
@@ -11,7 +11,7 @@
   
   “Failed to forward data” → Check AWS credentials or bucket name.
 
-**services/forwardService.js**
+**services/FORWARDSERVICE.JS**
 
   Handles uploading JSON data to AWS S3 using AWS SDK v3.
   Errors:
@@ -21,12 +21,12 @@
   TypeError (email.replace) → Ensure payload includes email.
   Tip: Log payload before upload.
 
-**utils/logger.js**
+**utils/LOGGER.JS**
 
   Simple JSON logger for info and error messages with timestamps.
   Tip: Redirect logs to a file with node server.js > logs.json 2>&1.
 
-**.env**
+**.ENV**
 
   Stores environment variables for AWS and app config.
   Example:
