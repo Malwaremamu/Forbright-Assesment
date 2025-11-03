@@ -1,44 +1,49 @@
-**SERVER.JS**
+**README
+server.js**
 
-  Main server file.
+  Starts Express app, loads random users via randomuser.me
+  .
   
-  Starts Express app and loads random users.
+  Uses axios with retry (3 attempts, exponential backoff) for API calls.
   
-  Defines /onboarding (uploads data to S3) and /query (runs analytics).
-  Errors:
+  Endpoints:
   
-  “Failed to fetch random users” → API or internet issue.
+  POST /onboarding: Uploads user data to S3.
   
-  “Failed to forward data” → Check AWS credentials or bucket name.
-
-**services/FORWARDSERVICE.JS**
-
-  Handles uploading JSON data to AWS S3 using AWS SDK v3.
-  Errors:
-  
-  “Missing credentials” → Add AWS keys to .env.
-  
-  TypeError (email.replace) → Ensure payload includes email.
-  Tip: Log payload before upload.
-
-**utils/LOGGER.JS**
-
-  Simple JSON logger for info and error messages with timestamps.
-  Tip: Redirect logs to a file with node server.js > logs.json 2>&1.
-
-**.ENV**
-
-  Stores environment variables for AWS and app config.
-  Example:
-  
-  AWS_ACCESS_KEY_ID=your-key
-  AWS_SECRET_ACCESS_KEY=your-secret
-  AWS_REGION=us-east-1
-  S3_BUCKET_NAME=your-bucket
-
+  POST /query: Runs queries on stored data.
 
 **Errors:**
 
-  AccessDenied / InvalidAccessKeyId → Check IAM permissions and key values.
+  "Failed to fetch random users" — API/internet issues.
   
-  “.env not found” → Ensure it’s in the project root and loaded via dotenv.
+  "Failed to forward data" — Check AWS credentials/bucket.
+
+**services/forwardService.js**
+
+  Uploads JSON to AWS S3 (AWS SDK v3).
+  
+  Supports bulk and single uploads.
+
+**Errors:**
+
+  "Missing credentials" — Configure AWS keys or IAM roles.
+  
+  TypeError (email.replace) — Payload missing email; log payload before upload.
+
+**utils/logger.js**
+
+  JSON logger with timestamps for info/error.
+  
+  Tip: Save logs to file with node server.js > logs.json 2>&1.
+  
+  Configuration & Deployment
+**
+**Local development:****
+  Use .env file for AWS keys, region, bucket name. Loaded via dotenv.
+  
+**  Production:**
+  Use IAM Roles attached to EC2 (or container) instance — do not store AWS keys in .env or code.
+  AWS SDK automatically uses the instance role credentials.
+
+**  Axios config:**
+  Axios client has a 5-second timeout and retries 3 times on network or 5xx errors with exponential backoff.
